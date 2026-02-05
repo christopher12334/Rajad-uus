@@ -56,3 +56,10 @@ export async function apiPostRaw<T>(path: string, body: ArrayBuffer | Uint8Array
 
   return res.json() as Promise<T>;
 }
+
+export function resolveApiUrl(url: string): string {
+  if (!url) return url;
+  if (/^https?:\/\//i.test(url) || url.startsWith('data:')) return url;
+  if (!API_BASE) return url;
+  return url.startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`;
+}
