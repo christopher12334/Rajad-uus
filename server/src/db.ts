@@ -9,9 +9,7 @@ if (!process.env.DATABASE_URL) {
 
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
 });
-
 
 export async function query<T = any>(text: string, params?: any[]): Promise<T[]> {
   const res = await pool.query(text, params);
