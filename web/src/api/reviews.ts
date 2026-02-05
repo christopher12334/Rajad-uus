@@ -69,11 +69,3 @@ export async function createReview(body: {
   return apiPostJson('/api/reviews', body);
 }
 
-import { API_BASE, resolveApiUrl } from './client';
-
-export async function uploadImage(file: File): Promise<string> {
-  const buf = await file.arrayBuffer();
-  const res = await apiPostRaw<{ url: string }>('/api/uploads', buf, file.type || 'image/jpeg');
-  return resolveApiUrl(res.url); // <-- oluline
-}
-
