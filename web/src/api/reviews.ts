@@ -1,4 +1,11 @@
-import { apiGet, apiPostJson, apiPostRaw } from './client';
+import { API_BASE, resolveApiUrl } from './client';
+
+export async function uploadImage(file: File): Promise<string> {
+  const buf = await file.arrayBuffer();
+  const res = await apiPostRaw<{ url: string }>('/api/uploads', buf, file.type || 'image/jpeg');
+  return resolveApiUrl(res.url); // <-- oluline
+}
+
 
 export type DifficultyCompared = 'Easier' | 'As Expected' | 'Harder';
 export type TerrainType = 'Forest' | 'Coastal' | 'Bog' | 'Mixed' | 'Urban' | 'Mountain';
