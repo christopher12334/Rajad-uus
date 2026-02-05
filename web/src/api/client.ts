@@ -57,6 +57,6 @@ export function resolveApiUrl(url: string): string {
   if (!url) return url;
   if (/^https?:\/\//i.test(url) || url.startsWith('data:')) return url;
 
-  // Kui backend tagastab "/uploads/..." või "/api/..."
+  // "/uploads/..." tähendab muidu domeeni JUURT; me tahame Renderi hosti ette
   return url.startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`;
 }
