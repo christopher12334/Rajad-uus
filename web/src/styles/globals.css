@@ -191,6 +191,13 @@ html {
   font-size: var(--font-size);
 }
 
+/* Keep header above Leaflet panes/controls */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+}
+
 /*
   Leaflet map
   ----------
@@ -200,4 +207,16 @@ html {
 */
 .leaflet-container {
   z-index: 0;
+}
+
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom,
+.leaflet-control-container {
+  z-index: 100;
+}
+
+/* Prevent map from capturing touches when mobile menu is open */
+body.menu-open .leaflet-container {
+  pointer-events: none;
 }

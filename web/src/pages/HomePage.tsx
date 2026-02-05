@@ -12,6 +12,11 @@ export function HomePage() {
   const lang = i18n.language?.startsWith('en') ? 'en' : 'et';
   const { data: tracks, loading, error } = useTracks(lang);
 
+  // Use Vite's BASE_URL to properly reference public assets when deployed in a subfolder
+  const base = import.meta.env.BASE_URL;
+  const heroImg = `${base}images/hero.jpg`;
+  const heroVideo = `${base}video/hero.mp4`;
+
   useEffect(() => {
     if (error) {
       console.error('Error loading tracks:', error);
@@ -44,24 +49,28 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero */}
+      {/* Hero with video background */}
       <div className="relative">
-        <div className="relative overflow-hidden text-white">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(6, 78, 59, 0.60), rgba(6, 78, 59, 0.60)), url('/hero.jpg')",
-              backgroundRepeat: 'no-repeat',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          />
+        <div className="relative overflow-hidden min-h-[52vh] md:min-h-[68vh]">
+          <video
+            className="absolute inset-0 w-full h-full object-cover object-[50%_30%]"
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster={heroImg}
+          >
+            <source src={heroVideo} type="video/mp4" />
+          </video>
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14 lg:py-16">
-            <div className="max-w-2xl">
-              <h1 className="text-4xl sm:text-5xl font-semibold leading-tight mb-4">{t('home.heroTitle')}</h1>
-              <p className="text-white/90 text-lg mb-7">{t('home.heroSubtitle')}</p>
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/70 via-emerald-900/55 to-emerald-900/35" />
+
+          {/* Content */}
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-16 lg:py-20 text-white">
+            <div className="max-w-3xl rounded-2xl bg-emerald-950/45 backdrop-blur-sm p-6 sm:p-8">
+              <h1 className="text-4xl sm:text-5xl font-semibold leading-tight mb-3">{t('home.heroTitle')}</h1>
+              <p className="text-white/90 text-lg mb-6">{t('home.heroSubtitle')}</p>
 
               <div className="flex flex-wrap items-center gap-3">
                 <Link

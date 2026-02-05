@@ -1,12 +1,20 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Mountain, Map, Filter, MessageSquare, Menu, X, ExternalLink } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export function Navigation() {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t, i18n } = useTranslation();
+
+  // Toggle body class when mobile menu opens/closes to prevent map from capturing touches
+  useEffect(() => {
+    document.body.classList.toggle('menu-open', isMobileMenuOpen);
+    return () => {
+      document.body.classList.remove('menu-open');
+    };
+  }, [isMobileMenuOpen]);
 
   const navItems = [
     { path: '/', label: t('nav.home'), icon: Mountain },
@@ -28,7 +36,7 @@ export function Navigation() {
   return (
     // NOTE: Leaflet (map) uses fairly high z-index values for its panes/controls.
     // Keep the navigation above everything so links remain clickable on mobile.
-    <nav className="bg-white border-b sticky top-0 z-[2000]">
+    <nav className="site-header bg-white border-b sticky top-0 z-[9999]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2" onClick={handleLinkClick}>
@@ -96,10 +104,10 @@ export function Navigation() {
       {isMobileMenuOpen && (
         <>
           {/* Backdrop */}
-          <div className="fixed inset-0 bg-black/50 z-[1990] md:hidden" onClick={() => setIsMobileMenuOpen(false)} />
+          <div className="fixed inset-0 bg-black/50 z-[9900] md:hidden" onClick={() => setIsMobileMenuOpen(false)} />
 
           {/* Menu Panel */}
-          <div className="fixed top-16 right-0 w-72 h-[calc(100vh-4rem)] bg-white shadow-2xl z-[2000] md:hidden overflow-y-auto">
+          <div className="fixed top-16 right-0 w-72 h-[calc(100vh-4rem)] bg-white shadow-2xl z-[9999] md:hidden overflow-y-auto">
             <div className="p-4">
               <div className="space-y-2">
                 {navItems.map((item) => {
