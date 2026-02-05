@@ -1,4 +1,4 @@
-export const API_BASE = import.meta.env.VITE_API_BASE ?? '';
+export const API_BASE = (import.meta.env.VITE_API_BASE ?? '').replace(/\/$/, '');
 
 async function parseError(res: Response): Promise<string> {
   const text = await res.text().catch(() => '');
@@ -14,10 +14,7 @@ export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
     },
   });
 
-  if (!res.ok) {
-    throw new Error(`API ${res.status}: ${await parseError(res)}`);
-  }
-
+  if (!res.ok) throw new Error(`API ${res.status}: ${await parseError(res)}`);
   return res.json() as Promise<T>;
 }
 
@@ -32,14 +29,16 @@ export async function apiPostJson<T>(path: string, body: any, init?: RequestInit
     body: JSON.stringify(body),
   });
 
-  if (!res.ok) {
-    throw new Error(`API ${res.status}: ${await parseError(res)}`);
-  }
-
+  if (!res.ok) throw new Error(`API ${res.status}: ${await parseError(res)}`);
   return res.json() as Promise<T>;
 }
 
-export async function apiPostRaw<T>(path: string, body: ArrayBuffer | Uint8Array | Blob, contentType: string, init?: RequestInit): Promise<T> {
+export async function apiPostRaw<T>(
+  path: string,
+  body: ArrayBuffer | Uint8Array | Blob,
+  contentType: string,
+  init?: RequestInit
+): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     method: 'POST',
     ...init,
@@ -50,16 +49,14 @@ export async function apiPostRaw<T>(path: string, body: ArrayBuffer | Uint8Array
     body: body as any,
   });
 
-  if (!res.ok) {
-    throw new Error(`API ${res.status}: ${await parseError(res)}`);
-  }
-
+  if (!res.ok) throw new Error(`API ${res.status}: ${await parseError(res)}`);
   return res.json() as Promise<T>;
 }
 
 export function resolveApiUrl(url: string): string {
   if (!url) return url;
   if (/^https?:\/\//i.test(url) || url.startsWith('data:')) return url;
-  if (!API_BASE) return url;
+
+  // Kui backend tagastab "/uploads/..." või "/api/..."
   return url.startsWith('/') ? `${API_BASE}${url}` : `${API_BASE}/${url}`;
 }
