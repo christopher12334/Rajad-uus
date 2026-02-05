@@ -1,18 +1,5 @@
 import { apiGet, apiPostJson, apiPostRaw, resolveApiUrl } from './client';
 
-export async function uploadImage(file: File): Promise<string> {
-  const buf = await file.arrayBuffer();
-  const res = await apiPostRaw<{ url: string }>(
-    '/api/uploads',
-    buf,
-    file.type || 'image/jpeg'
-  );
-
-  // <-- see on oluline
-  return resolveApiUrl(res.url);
-}
-
-
 export type DifficultyCompared = 'Easier' | 'As Expected' | 'Harder';
 export type TerrainType = 'Forest' | 'Coastal' | 'Bog' | 'Mixed' | 'Urban' | 'Mountain';
 export type TrailSurface = 'Paved' | 'Gravel' | 'Dirt' | 'Rocky' | 'Boardwalk' | 'Mixed';
@@ -59,10 +46,15 @@ export async function fetchReviewStats(): Promise<ReviewStats> {
   return apiGet<ReviewStats>('/api/reviews/stats');
 }
 
+// ✅ ainult see üks
 export async function uploadImage(file: File): Promise<string> {
   const buf = await file.arrayBuffer();
-  const res = await apiPostRaw<{ url: string }>('/api/uploads', buf, file.type || 'image/jpeg');
-  return res.url;
+  const res = await apiPostRaw<{ url: string }>(
+    '/api/uploads',
+    buf,
+    file.type || 'image/jpeg'
+  );
+  return resolveApiUrl(res.url);
 }
 
 export async function createReview(body: {
@@ -77,8 +69,9 @@ export async function createReview(body: {
   accessibility?: Accessibility | null;
   best_season?: BestSeason | null;
   images?: string[];
-}): Promise<{ review: ReviewRecord; track: { id: string; avg_rating: number | null; review_count: number; cover_image_url: string | null } }>
-{
+}): Promise<{
+  review: ReviewRecord;
+  track: { id: string; avg_rating: number | null; review_count: number; cover_image_url: string | null };
+}> {
   return apiPostJson('/api/reviews', body);
 }
-
